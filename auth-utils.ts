@@ -12,6 +12,8 @@ export const encryptPassword = async (password: string) => {
 
 export const createUnsecuredUserInformation = (user: User) => ({
   user: user.user,
+  balance: user.balance,
+  calorie_goal: user.calorie_goal,
 });
 
 export const createTokenForUser = (user: User) => {
@@ -43,6 +45,9 @@ export const authMiddleware = async (
   next: NextFunction
 ) => {
   const [, token] = req.headers.authorization?.split?.(" ") || [];
+
+  console.log("hit");
+
   const myJwtData = getDataFromAuthToken(token);
 
   if (!myJwtData) {

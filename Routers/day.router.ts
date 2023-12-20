@@ -6,14 +6,18 @@ import { z } from "zod";
 
 export const dayRouter = Router();
 
-dayRouter.get("/:userId", async (req, res) => {
+dayRouter.get("/:userId", authMiddleware, async (req, res) => {
+  req.params.userId = req.user!.id.toString();
+
+  // req.params.userId = req.user!.id.toString();
+
   const days = await prisma.day.findMany({
     where: {
       userId: +req.params.userId,
     },
   });
 
-  if (!days)
+  if (days.length === 0)
     return res
       .status(400)
       .send({ message: "No days for this user or user doesn't exist" });

@@ -54,6 +54,6 @@ app.use("/foods", foodRouter);
 
 app.use("/auth", authRouter);
 
-app.listen(3000);
+app.listen(3001);
 
 export {};

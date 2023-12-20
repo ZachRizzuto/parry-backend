@@ -10,7 +10,8 @@
   },
   "scripts": {
     "seed": "npx ts-node seed.ts",
-    "clearDb": "npx ts-node clearDb.ts"
+    "clearDb": "npx ts-node clearDb.ts",
+    "serve": "npx nodemon app.ts"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",

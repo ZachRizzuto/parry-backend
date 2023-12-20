@@ -4,12 +4,23 @@ import { validateRequest } from "zod-express-middleware";
 import { prisma } from "../app";
 import bcrypt from "bcrypt";
 import {
+  authMiddleware,
   createTokenForUser,
   createUnsecuredUserInformation,
   encryptPassword,
+  getDataFromAuthToken,
 } from "../auth-utils";
 
 export const authRouter = Router();
+
+const tokenSchema = z.object({
+  token: z.string(),
+  userInformation: z.object({
+    user: z.string(),
+    balance: z.number(),
+    calorie_goal: z.number(),
+  }),
+});
 
 authRouter.post(
   "/login",
@@ -45,6 +56,38 @@ authRouter.post(
     const token = createTokenForUser(user);
 
     return res.status(200).json({ token, userInformation });
+  }
+);
+
+authRouter.post(
+  "/login/redirect",
+  validateRequest({
+    body: tokenSchema,
+  }),
+  async (req, res) => {
+    const jwtData = getDataFromAuthToken(req.body.token);
+
+    if (!jwtData) {
+      return res.status(401).json({ message: "Invalid Token" });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: {
+        user: jwtData.user,
+      },
+    });
+
+    if (!user) {
+      return res.status(400).send({ message: "User not found" });
+    }
+
+    req.headers.authorization = req.body.token;
+
+    return res.status(200).send({
+      user: user.user,
+      balance: user.balance,
+      calorie_goal: user.calorie_goal,
+    });
   }
 );
 
