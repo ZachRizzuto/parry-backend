@@ -46,8 +46,6 @@ export const authMiddleware = async (
 ) => {
   const [, token] = req.headers.authorization?.split?.(" ") || [];
 
-  console.log("hit");
-
   const myJwtData = getDataFromAuthToken(token);
 
   if (!myJwtData) {
@@ -63,6 +61,8 @@ export const authMiddleware = async (
   if (!userFromJwt) {
     return res.status(401).send({ message: "User not found" });
   }
+
+  req.headers.authorization = token;
 
   req.user = userFromJwt;
 

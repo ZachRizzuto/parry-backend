@@ -6,6 +6,11 @@ import { z } from "zod";
 
 export const dayRouter = Router();
 
+dayRouter.get("/", authMiddleware, async (req, res) => {
+  const days = await prisma.day.findMany();
+  return res.status(200).send(days);
+});
+
 dayRouter.get("/:userId", authMiddleware, async (req, res) => {
   req.params.userId = req.user!.id.toString();
 

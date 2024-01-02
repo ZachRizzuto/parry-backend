@@ -62,7 +62,9 @@ authRouter.post(
 authRouter.post(
   "/login/redirect",
   validateRequest({
-    body: tokenSchema,
+    body: z.object({
+      token: z.string(),
+    }),
   }),
   async (req, res) => {
     const jwtData = getDataFromAuthToken(req.body.token);
@@ -83,7 +85,7 @@ authRouter.post(
 
     req.headers.authorization = req.body.token;
 
-    return res.status(200).send({
+    return res.status(200).json({
       user: user.user,
       balance: user.balance,
       calorie_goal: user.calorie_goal,
