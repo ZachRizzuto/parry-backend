@@ -34,19 +34,17 @@ entryRouter.post(
   }
 );
 
-entryRouter.get("/:userId/:dayId", async (req, res) => {
-  const userId = parseInt(req.params.userId);
+entryRouter.get("/:dayId", authMiddleware, async (req, res) => {
   const dayId = parseInt(req.params.dayId);
 
   const entries = await prisma.entry.findMany({
     where: {
-      userId: userId,
+      userId: req.user!.id,
       dayId: dayId,
     },
   });
 
-  if (!entries)
-    return res.status(400).send({ message: "Couldn't get entries" });
+  if (!entries) return res.status(204).send([]);
 
   return res.status(200).send(entries);
 });
