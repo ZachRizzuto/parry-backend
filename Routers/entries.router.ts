@@ -11,7 +11,7 @@ entryRouter.post(
   authMiddleware,
   validateRequest({
     body: z.object({
-      createdAt: z.bigint(),
+      createdAt: z.number(),
       foodId: z.number(),
       dayId: z.number(),
     }),
@@ -23,7 +23,7 @@ entryRouter.post(
           userId: req.user!.id,
           foodId: req.body.foodId,
           dayId: req.body.dayId,
-          createdAt: timeNow.toString(),
+          createdAt: `${timeNow}`,
         },
       });
 
@@ -55,4 +55,32 @@ entryRouter.get("/", async (req, res) => {
   if (!entries) return res.status(400).send({ message: "No entries" });
 
   return res.status(200).send(entries);
+});
+
+entryRouter.delete("/:entryId", authMiddleware, async (req, res) => {
+  let entryId = parseInt(req.params.entryId);
+
+  const userId = req.user!.id;
+
+  const entry = await prisma.entry.findFirst({
+    where: {
+      id: entryId,
+      userId: userId,
+    },
+  });
+
+  if (!entry) return res.status(204).send({ message: "Entry doesn't exist" });
+
+  try {
+    await prisma.entry.delete({
+      where: {
+        userId: userId,
+        id: entryId,
+      },
+    });
+
+    return res.status(204).send({ message: "Deleted entry" });
+  } catch {
+    return res.status(400).send("Couldn't delete entry");
+  }
 });

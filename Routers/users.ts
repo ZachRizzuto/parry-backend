@@ -27,7 +27,7 @@ userRouter.get("/:id", async (req, res) => {
 });
 
 userRouter.patch(
-  "/:id",
+  "/",
   authMiddleware,
   validateRequest({
     body: z.object({
@@ -44,6 +44,8 @@ userRouter.patch(
           balance: req.body.balance,
         },
       });
+
+      return res.status(200).send({ message: "Updated calorie goal" });
     } catch (e) {
       res.status(400).send({ message: "Couldn't edit balance " });
     }

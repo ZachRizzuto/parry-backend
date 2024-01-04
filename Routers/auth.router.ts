@@ -13,15 +13,6 @@ import {
 
 export const authRouter = Router();
 
-const tokenSchema = z.object({
-  token: z.string(),
-  userInformation: z.object({
-    user: z.string(),
-    balance: z.number(),
-    calorie_goal: z.number(),
-  }),
-});
-
 authRouter.post(
   "/login",
   validateRequest({
@@ -82,8 +73,6 @@ authRouter.post(
     if (!user) {
       return res.status(400).send({ message: "User not found" });
     }
-
-    req.headers.authorization = req.body.token;
 
     return res.status(200).json({
       user: user.user,
