@@ -27,11 +27,11 @@ userRouter.get("/:id", async (req, res) => {
 });
 
 userRouter.patch(
-  "/",
+  "/:user/balance",
   authMiddleware,
   validateRequest({
     body: z.object({
-      balance: z.number().optional(),
+      balance: z.number(),
     }),
   }),
   async (req, res) => {

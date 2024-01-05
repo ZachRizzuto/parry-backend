@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { formatedDate } from "./app";
+import { encryptPassword } from "./auth-utils";
 
 const prisma = new PrismaClient();
 
@@ -12,9 +13,11 @@ const seedDb = async () => {
     await prisma.user.deleteMany();
     await prisma.food.deleteMany();
 
+    const password = await encryptPassword("password");
+
     const sampleUser = {
-      user: "zach",
-      passHash: "zach@password",
+      user: "sampleuser",
+      passHash: password,
     };
 
     const user = await prisma.user.create({
@@ -34,7 +37,7 @@ const seedDb = async () => {
       },
     });
 
-    const sampleFood = {
+    const sampleFoods = {
       food: "banana",
       calories: 80,
       amount: "1 oz",
@@ -42,7 +45,7 @@ const seedDb = async () => {
 
     const food = await prisma.food.create({
       data: {
-        ...sampleFood,
+        ...sampleFoods,
       },
     });
 
@@ -62,7 +65,7 @@ const seedDb = async () => {
     console.log(e);
   }
 
-  console.log("Database seeded 🌱");
+  return console.log("Database seeded 🌱");
 };
 
 seedDb();

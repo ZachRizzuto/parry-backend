@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { prisma, timeNow } from "../app";
-import { validateRequest } from "zod-express-middleware";
 import { z } from "zod";
+import { validateRequest } from "zod-express-middleware";
+import { prisma, timeNow } from "../app";
 import { authMiddleware } from "../auth-utils";
 
 export const entryRouter = Router();
@@ -49,8 +49,12 @@ entryRouter.get("/:dayId", authMiddleware, async (req, res) => {
   return res.status(200).send(entries);
 });
 
-entryRouter.get("/", async (req, res) => {
-  const entries = await prisma.entry.findMany();
+entryRouter.get("/", authMiddleware, async (req, res) => {
+  const entries = await prisma.entry.findMany({
+    where: {
+      userId: req.user!.id,
+    },
+  });
 
   if (!entries) return res.status(400).send({ message: "No entries" });
 
