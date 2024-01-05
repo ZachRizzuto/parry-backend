@@ -12,6 +12,8 @@ export const encryptPassword = async (password: string) => {
 
 export const createUnsecuredUserInformation = (user: User) => ({
   user: user.user,
+  balance: user.balance,
+  calorie_goal: user.calorie_goal,
 });
 
 export const createTokenForUser = (user: User) => {
@@ -43,6 +45,7 @@ export const authMiddleware = async (
   next: NextFunction
 ) => {
   const [, token] = req.headers.authorization?.split?.(" ") || [];
+
   const myJwtData = getDataFromAuthToken(token);
 
   if (!myJwtData) {
@@ -58,6 +61,8 @@ export const authMiddleware = async (
   if (!userFromJwt) {
     return res.status(401).send({ message: "User not found" });
   }
+
+  req.headers.authorization = token;
 
   req.user = userFromJwt;
 

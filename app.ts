@@ -1,4 +1,5 @@
 import { PrismaClient, User } from "@prisma/client";
+import cors from "cors";
 import express from "express";
 import { userRouter } from "./Routers/users";
 import { foodRouter } from "./Routers/foods";
@@ -38,6 +39,8 @@ export const prisma = new PrismaClient();
 
 const app = express();
 
+app.use(cors());
+
 app.use(express.json());
 
 app.get("/", (req, res) => {
@@ -54,6 +57,6 @@ app.use("/foods", foodRouter);
 
 app.use("/auth", authRouter);
 
-app.listen(3000);
+app.listen(3001);
 
 export {};
