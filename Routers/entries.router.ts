@@ -27,7 +27,7 @@ entryRouter.post(
         },
       });
 
-      return res.status(200).send(newEntry);
+      return res.status(201).send(newEntry);
     } catch (e) {
       return res.status(500).send({ message: "Sorry couldn't create entry" });
     }

@@ -45,7 +45,7 @@ userRouter.patch(
         },
       });
 
-      return res.status(200).send({ message: "Updated calorie goal" });
+      return res.status(201).send({ message: "Updated calorie goal" });
     } catch (e) {
       res.status(400).send({ message: "Couldn't edit balance " });
     }

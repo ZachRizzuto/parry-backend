@@ -1,10 +1,9 @@
+import bcrypt from "bcrypt";
 import { Router } from "express";
 import { z } from "zod";
 import { validateRequest } from "zod-express-middleware";
 import { prisma } from "../app";
-import bcrypt from "bcrypt";
 import {
-  authMiddleware,
   createTokenForUser,
   createUnsecuredUserInformation,
   encryptPassword,
@@ -101,7 +100,7 @@ authRouter.post(
         },
       });
 
-      return res.status(200).send({ message: "Successfully created account" });
+      return res.status(201).send({ message: "Successfully created account" });
     } catch (e) {
       res.status(400).json({
         message: "Couldn't create account",

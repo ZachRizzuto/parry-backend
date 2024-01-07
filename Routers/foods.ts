@@ -1,4 +1,3 @@
-import { PrismaClient } from "@prisma/client";
 import { Router } from "express";
 import { z } from "zod";
 import { validateRequest } from "zod-express-middleware";
@@ -35,7 +34,7 @@ foodRouter.post(
         },
       });
 
-      return res.status(200).send(food);
+      return res.status(201).send(food);
     } catch (e) {
       return res.status(500);
     }
