@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { authMiddleware } from "../auth-utils";
-import { prisma } from "../app";
-import { validateRequest } from "zod-express-middleware";
 import { z } from "zod";
+import { validateRequest } from "zod-express-middleware";
+import { prisma } from "../app";
+import { authMiddleware } from "../auth-utils";
 
 export const dayRouter = Router();
 
@@ -67,7 +67,7 @@ dayRouter.post(
         },
       });
 
-      return res.status(200).send(day);
+      return res.status(201).send(day);
     } catch (e) {
       return res.status(400).send({ message: "Couldn't create day" });
     }
