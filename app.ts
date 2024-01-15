@@ -1,11 +1,14 @@
 import { PrismaClient, User } from "@prisma/client";
 import cors from "cors";
+import { configDotenv } from "dotenv";
 import express from "express";
-import { userRouter } from "./Routers/users";
-import { foodRouter } from "./Routers/foods";
 import { authRouter } from "./Routers/auth.router";
 import { dayRouter } from "./Routers/day.router";
 import { entryRouter } from "./Routers/entries.router";
+import { foodRouter } from "./Routers/foods";
+import { userRouter } from "./Routers/users";
+
+configDotenv();
 
 const date = new Date();
 
