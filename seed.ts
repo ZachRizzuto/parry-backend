@@ -6,6 +6,23 @@ const prisma = new PrismaClient();
 
 const date = new Date();
 
+const createUser = async ({
+  user,
+  password,
+}: {
+  user: string;
+  password: string;
+}) => {
+  const passHash = await encryptPassword(password);
+
+  return await prisma.user.create({
+    data: {
+      user,
+      passHash,
+    },
+  });
+};
+
 const seedDb = async () => {
   try {
     await prisma.entry.deleteMany();
@@ -13,21 +30,13 @@ const seedDb = async () => {
     await prisma.user.deleteMany();
     await prisma.food.deleteMany();
 
-    const password = await encryptPassword("password");
-
-    const sampleUser = {
+    const sampleUserOne = await createUser({
       user: "sampleuser",
-      passHash: password,
-    };
-
-    const user = await prisma.user.create({
-      data: {
-        ...sampleUser,
-      },
+      password: "password",
     });
 
     const sampleDay = {
-      userId: user.id,
+      userId: sampleUserOne.id,
       date: formatedDate,
     };
 
@@ -50,7 +59,7 @@ const seedDb = async () => {
     });
 
     const sampleEntry = {
-      userId: user.id,
+      userId: sampleUserOne.id,
       dayId: day.id,
       createdAt: date.getTime().toString(),
       foodId: food.id,
@@ -65,7 +74,9 @@ const seedDb = async () => {
     console.log(e);
   }
 
-  return console.log("Database seeded 🌱");
+  console.log("Database seeded 🌱");
+
+  process.exit();
 };
 
 seedDb();
