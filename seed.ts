@@ -75,8 +75,11 @@ const seedDb = async () => {
   }
 
   console.log("Database seeded 🌱");
+};
 
+const run = async () => {
+  await seedDb();
   process.exit();
 };
 
-seedDb();
+run();

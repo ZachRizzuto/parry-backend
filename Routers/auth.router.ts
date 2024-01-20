@@ -85,8 +85,8 @@ authRouter.post(
   "/signup",
   validateRequest({
     body: z.object({
-      user: z.string(),
-      password: z.string(),
+      user: z.string().min(1),
+      password: z.string().min(1),
     }),
   }),
   async (req, res) => {
