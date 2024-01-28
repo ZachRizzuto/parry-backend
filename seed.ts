@@ -25,6 +25,7 @@ const createUser = async ({
 
 const seedDb = async () => {
   try {
+    await prisma.foodEntry.deleteMany();
     await prisma.entry.deleteMany();
     await prisma.day.deleteMany();
     await prisma.user.deleteMany();
@@ -46,28 +47,58 @@ const seedDb = async () => {
       },
     });
 
-    const sampleFoods = {
-      food: "banana",
-      calories: 80,
-      amount: "1 oz",
-    };
+    const sampleFoods = [
+      {
+        food: "banana",
+        calories: 80,
+        amount: "1 oz",
+      },
+      {
+        food: "strawberry",
+        calories: 20,
+        amount: "1 whole",
+      },
+    ];
 
-    const food = await prisma.food.create({
+    await prisma.food.create({
       data: {
-        ...sampleFoods,
+        ...sampleFoods[0],
       },
     });
+
+    await prisma.food.create({
+      data: {
+        ...sampleFoods[1],
+      },
+    });
+
+    const foods = await prisma.food.findMany();
 
     const sampleEntry = {
       userId: sampleUserOne.id,
       dayId: day.id,
+      mealType: "snack",
+      mealName: "Brunch",
       createdAt: date.getTime().toString(),
-      foodId: food.id,
     };
 
     const entry = await prisma.entry.create({
       data: {
         ...sampleEntry,
+      },
+    });
+
+    const foodEntry = await prisma.foodEntry.create({
+      data: {
+        foodId: foods[0].id,
+        entryId: entry.id,
+      },
+    });
+
+    await prisma.foodEntry.create({
+      data: {
+        foodId: foods[1].id,
+        entryId: entry.id,
       },
     });
   } catch (e) {

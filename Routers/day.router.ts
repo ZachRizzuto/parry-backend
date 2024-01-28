@@ -12,6 +12,7 @@ dayRouter.get("/", authMiddleware, async (req, res) => {
       userId: req.user!.id,
     },
   });
+
   return res.status(200).send(days);
 });
 

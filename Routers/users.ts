@@ -36,7 +36,7 @@ userRouter.patch(
   }),
   async (req, res) => {
     try {
-      const user = await prisma.user.update({
+      await prisma.user.update({
         where: {
           id: req.user!.id,
         },
@@ -45,9 +45,35 @@ userRouter.patch(
         },
       });
 
-      return res.status(201).send({ message: "Updated calorie goal" });
+      return res.status(201).send({ message: "Updated balance" });
     } catch (e) {
       res.status(400).send({ message: "Couldn't edit balance " });
+    }
+  }
+);
+
+userRouter.patch(
+  "/:user/calorie_goal",
+  authMiddleware,
+  validateRequest({
+    body: z.object({
+      calorie_goal: z.number(),
+    }),
+  }),
+  async (req, res) => {
+    try {
+      await prisma.user.update({
+        where: {
+          id: req.user!.id,
+        },
+        data: {
+          calorie_goal: req.body.calorie_goal,
+        },
+      });
+
+      return res.status(201).send({ message: "Updated calorie goal" });
+    } catch (e) {
+      res.status(400).send({ message: "Couldn't edit calorie_goal " });
     }
   }
 );

@@ -11,19 +11,38 @@ entryRouter.post(
   authMiddleware,
   validateRequest({
     body: z.object({
-      createdAt: z.number(),
-      foodId: z.number(),
       dayId: z.number(),
+      mealType: z.string(),
+      mealName: z.string(),
+      foodsIds: z.array(z.number()),
     }),
   }),
   async (req, res) => {
+    const foods = req.body.foodsIds;
     try {
       const newEntry = await prisma.entry.create({
         data: {
           userId: req.user!.id,
-          foodId: req.body.foodId,
           dayId: req.body.dayId,
           createdAt: `${timeNow}`,
+          mealType: req.body.mealType,
+          mealName: req.body.mealName,
+          foods: {
+            create: foods.map((foodId) => ({
+              food: {
+                connect: {
+                  id: foodId,
+                },
+              },
+            })),
+          },
+        },
+        include: {
+          foods: {
+            include: {
+              food: true,
+            },
+          },
         },
       });
 
@@ -41,6 +60,13 @@ entryRouter.get("/:dayId", authMiddleware, async (req, res) => {
     where: {
       userId: req.user!.id,
       dayId: dayId,
+    },
+    include: {
+      foods: {
+        include: {
+          food: true,
+        },
+      },
     },
   });
 
