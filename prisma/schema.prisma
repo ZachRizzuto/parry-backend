@@ -54,6 +54,4 @@ model FoodEntry {
   foodId  Int
   entry   Entry @relation(fields: [entryId], references: [id])
   food    Food  @relation(fields: [foodId], references: [id])
-
-  @@unique([entryId, foodId])
 }

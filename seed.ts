@@ -49,14 +49,14 @@ const seedDb = async () => {
 
     const sampleFoods = [
       {
-        food: "banana",
+        food: "Banana",
         calories: 80,
-        amount: "1 oz",
+        amount: "1 Oz",
       },
       {
-        food: "strawberry",
+        food: "Strawberry",
         calories: 20,
-        amount: "1 whole",
+        amount: "1 Whole",
       },
     ];
 

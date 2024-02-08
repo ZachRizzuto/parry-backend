@@ -48,7 +48,7 @@ entryRouter.post(
 
       return res.status(201).send(newEntry);
     } catch (e) {
-      return res.status(500).send({ message: "Sorry couldn't create entry" });
+      return res.status(500).send({ message: e });
     }
   }
 );
@@ -102,6 +102,12 @@ entryRouter.delete("/:entryId", authMiddleware, async (req, res) => {
   if (!entry) return res.status(204).send({ message: "Entry doesn't exist" });
 
   try {
+    await prisma.foodEntry.deleteMany({
+      where: {
+        entryId: entry.id,
+      },
+    });
+
     await prisma.entry.delete({
       where: {
         userId: userId,
@@ -110,7 +116,7 @@ entryRouter.delete("/:entryId", authMiddleware, async (req, res) => {
     });
 
     return res.status(204).send({ message: "Deleted entry" });
-  } catch {
-    return res.status(400).send("Couldn't delete entry");
+  } catch (e) {
+    return res.status(400).send({ error: e });
   }
 });

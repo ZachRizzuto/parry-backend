@@ -33,7 +33,6 @@ dayRouter.get("/:date", authMiddleware, async (req, res) => {
 
 dayRouter.get("/:userId", authMiddleware, async (req, res) => {
   req.params.userId = req.user!.id.toString();
-  6;
 
   // req.params.userId = req.user!.id.toString();
 
