@@ -58,26 +58,57 @@ const seedDb = async () => {
         calories: 20,
         amount: "1 Whole",
       },
+      {
+        food: "Hamburger",
+        calories: 354,
+        amount: "1 Whole",
+      },
+      {
+        food: "French Fries",
+        calories: 365,
+        amount: "1 Whole",
+      },
+      {
+        food: "Mashed Potatoes",
+        calories: 214,
+        amount: "1 Cup",
+      },
+      {
+        food: "Grilled Cheese Sandwhich",
+        calories: 378,
+        amount: "1 Whole",
+      },
+      {
+        food: "Chicken Nuggets",
+        calories: 296,
+        amount: "100 G",
+      },
+      {
+        food: 'Pizza 8"',
+        calories: 1100,
+        amount: "1 Whole",
+      },
+      {
+        food: "10 Count Boneless Wings",
+        calories: 650,
+        amount: "1 Whole",
+      },
     ];
 
-    await prisma.food.create({
-      data: {
-        ...sampleFoods[0],
-      },
-    });
-
-    await prisma.food.create({
-      data: {
-        ...sampleFoods[1],
-      },
-    });
+    for (let food of sampleFoods) {
+      await prisma.food.create({
+        data: {
+          ...food,
+        },
+      });
+    }
 
     const foods = await prisma.food.findMany();
 
     const sampleEntry = {
       userId: sampleUserOne.id,
       dayId: day.id,
-      mealType: "snack",
+      mealType: "Snack",
       mealName: "Brunch",
       createdAt: date.getTime().toString(),
     };

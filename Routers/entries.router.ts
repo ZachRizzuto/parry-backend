@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { z } from "zod";
 import { validateRequest } from "zod-express-middleware";
-import { prisma, timeNow } from "../app";
+import { getTimeNow, prisma, timeNow } from "../app";
 import { authMiddleware } from "../auth-utils";
 
 export const entryRouter = Router();
@@ -24,7 +24,7 @@ entryRouter.post(
         data: {
           userId: req.user!.id,
           dayId: req.body.dayId,
-          createdAt: `${timeNow}`,
+          createdAt: `${getTimeNow()}`,
           mealType: req.body.mealType,
           mealName: req.body.mealName,
           foods: {

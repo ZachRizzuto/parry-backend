@@ -11,6 +11,17 @@ dayRouter.get("/", authMiddleware, async (req, res) => {
     where: {
       userId: req.user!.id,
     },
+    include: {
+      entries: {
+        include: {
+          foods: {
+            include: {
+              food: true,
+            },
+          },
+        },
+      },
+    },
   });
 
   return res.status(200).send(days);
@@ -39,6 +50,9 @@ dayRouter.get("/:userId", authMiddleware, async (req, res) => {
   const days = await prisma.day.findMany({
     where: {
       userId: +req.params.userId,
+    },
+    include: {
+      entries: true,
     },
   });
 
