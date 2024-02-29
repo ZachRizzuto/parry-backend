@@ -14,9 +14,15 @@ const date = new Date();
 
 export const formatedDate = `${
   date.getMonth() + 1
-}/${date.getDay()}/${date.getFullYear()}`;
+}-${date.getDay()}-${date.getFullYear()}`;
 
 export const timeNow = date.getTime();
+
+export const getTimeNow = () => {
+  const date = new Date();
+
+  return date.getTime();
+};
 
 declare global {
   namespace NodeJs {

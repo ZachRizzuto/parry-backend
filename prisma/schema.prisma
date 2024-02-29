@@ -21,11 +21,11 @@ model User {
 }
 
 model Food {
-  id       Int     @id @default(autoincrement())
+  id       Int         @id @default(autoincrement())
   food     String
   calories Int
   amount   String
-  entries  Entry[]
+  entry    FoodEntry[]
 }
 
 model Day {
@@ -37,12 +37,21 @@ model Day {
 }
 
 model Entry {
-  id        Int    @id @default(autoincrement())
+  id        Int         @id @default(autoincrement())
   createdAt String
   userId    Int
-  foodId    Int
+  foods     FoodEntry[]
   dayId     Int
-  user      User   @relation(fields: [userId], references: [id])
-  day       Day    @relation(fields: [dayId], references: [id])
-  food      Food   @relation(fields: [foodId], references: [id])
+  mealType  String
+  mealName  String
+  user      User        @relation(fields: [userId], references: [id])
+  day       Day         @relation(fields: [dayId], references: [id])
+}
+
+model FoodEntry {
+  id      Int   @id @default(autoincrement())
+  entryId Int
+  foodId  Int
+  entry   Entry @relation(fields: [entryId], references: [id])
+  food    Food  @relation(fields: [foodId], references: [id])
 }

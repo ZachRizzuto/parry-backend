@@ -2,6 +2,7 @@ import { Router } from "express";
 import { z } from "zod";
 import { validateRequest } from "zod-express-middleware";
 import { prisma } from "../app";
+import { formatFoodMiddleware } from "../req-utils";
 
 export const foodRouter = Router();
 
@@ -24,6 +25,7 @@ foodRouter.post(
       })
       .strict(),
   }),
+  formatFoodMiddleware,
   async (req, res) => {
     try {
       const food = await prisma.food.create({

@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { z } from "zod";
 import { validateRequest } from "zod-express-middleware";
-import { prisma, timeNow } from "../app";
+import { getTimeNow, prisma, timeNow } from "../app";
 import { authMiddleware } from "../auth-utils";
 
 export const entryRouter = Router();
@@ -11,25 +11,44 @@ entryRouter.post(
   authMiddleware,
   validateRequest({
     body: z.object({
-      createdAt: z.number(),
-      foodId: z.number(),
       dayId: z.number(),
+      mealType: z.string(),
+      mealName: z.string(),
+      foodsIds: z.array(z.number()),
     }),
   }),
   async (req, res) => {
+    const foods = req.body.foodsIds;
     try {
       const newEntry = await prisma.entry.create({
         data: {
           userId: req.user!.id,
-          foodId: req.body.foodId,
           dayId: req.body.dayId,
-          createdAt: `${timeNow}`,
+          createdAt: `${getTimeNow()}`,
+          mealType: req.body.mealType,
+          mealName: req.body.mealName,
+          foods: {
+            create: foods.map((foodId) => ({
+              food: {
+                connect: {
+                  id: foodId,
+                },
+              },
+            })),
+          },
+        },
+        include: {
+          foods: {
+            include: {
+              food: true,
+            },
+          },
         },
       });
 
       return res.status(201).send(newEntry);
     } catch (e) {
-      return res.status(500).send({ message: "Sorry couldn't create entry" });
+      return res.status(500).send({ message: e });
     }
   }
 );
@@ -41,6 +60,13 @@ entryRouter.get("/:dayId", authMiddleware, async (req, res) => {
     where: {
       userId: req.user!.id,
       dayId: dayId,
+    },
+    include: {
+      foods: {
+        include: {
+          food: true,
+        },
+      },
     },
   });
 
@@ -76,6 +102,12 @@ entryRouter.delete("/:entryId", authMiddleware, async (req, res) => {
   if (!entry) return res.status(204).send({ message: "Entry doesn't exist" });
 
   try {
+    await prisma.foodEntry.deleteMany({
+      where: {
+        entryId: entry.id,
+      },
+    });
+
     await prisma.entry.delete({
       where: {
         userId: userId,
@@ -84,7 +116,7 @@ entryRouter.delete("/:entryId", authMiddleware, async (req, res) => {
     });
 
     return res.status(204).send({ message: "Deleted entry" });
-  } catch {
-    return res.status(400).send("Couldn't delete entry");
+  } catch (e) {
+    return res.status(400).send({ error: e });
   }
 });

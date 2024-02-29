@@ -2,6 +2,12 @@ import { PrismaClient } from "@prisma/client";
 import { formatedDate } from "./app";
 import { encryptPassword } from "./auth-utils";
 
+type Food = {
+  food: string;
+  calories: number;
+  amount: string;
+};
+
 const prisma = new PrismaClient();
 
 const date = new Date();
@@ -23,8 +29,19 @@ const createUser = async ({
   });
 };
 
+const createFoods = async (foods: Food[]) => {
+  for (let food of foods) {
+    await prisma.food.create({
+      data: {
+        ...food,
+      },
+    });
+  }
+};
+
 const seedDb = async () => {
   try {
+    await prisma.foodEntry.deleteMany();
     await prisma.entry.deleteMany();
     await prisma.day.deleteMany();
     await prisma.user.deleteMany();
@@ -46,28 +63,88 @@ const seedDb = async () => {
       },
     });
 
-    const sampleFoods = {
-      food: "banana",
-      calories: 80,
-      amount: "1 oz",
-    };
-
-    const food = await prisma.food.create({
-      data: {
-        ...sampleFoods,
+    const sampleFoods = [
+      {
+        food: "Banana",
+        calories: 80,
+        amount: "1 Oz",
       },
-    });
+      {
+        food: "Strawberry",
+        calories: 20,
+        amount: "1 Whole",
+      },
+      {
+        food: "Hamburger",
+        calories: 354,
+        amount: "1 Whole",
+      },
+      {
+        food: "French Fries",
+        calories: 365,
+        amount: "1 Whole",
+      },
+      {
+        food: "Mashed Potatoes",
+        calories: 214,
+        amount: "1 Cup",
+      },
+      {
+        food: "Grilled Cheese Sandwhich",
+        calories: 378,
+        amount: "1 Whole",
+      },
+      {
+        food: "Chicken Nuggets",
+        calories: 296,
+        amount: "100 G",
+      },
+      {
+        food: 'Pizza 8"',
+        calories: 1100,
+        amount: "1 Whole",
+      },
+      {
+        food: "10 Count Boneless Wings",
+        calories: 650,
+        amount: "1 Whole",
+      },
+      {
+        food: "10 Piece Chicken Nuggets",
+        calories: 1000,
+        amount: "1 Whole",
+      },
+    ];
+
+    await createFoods(sampleFoods);
+
+    const foods = await prisma.food.findMany();
 
     const sampleEntry = {
       userId: sampleUserOne.id,
       dayId: day.id,
+      mealType: "Snack",
+      mealName: "Brunch",
       createdAt: date.getTime().toString(),
-      foodId: food.id,
     };
 
     const entry = await prisma.entry.create({
       data: {
         ...sampleEntry,
+      },
+    });
+
+    const foodEntry = await prisma.foodEntry.create({
+      data: {
+        foodId: foods[0].id,
+        entryId: entry.id,
+      },
+    });
+
+    await prisma.foodEntry.create({
+      data: {
+        foodId: foods[1].id,
+        entryId: entry.id,
       },
     });
   } catch (e) {
