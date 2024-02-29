@@ -79,6 +79,9 @@ dayRouter.post(
           date: req.body.date,
           userId: req.user!.id,
         },
+        include: {
+          entries: true,
+        },
       });
 
       return res.status(201).send(day);
