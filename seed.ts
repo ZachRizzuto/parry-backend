@@ -2,6 +2,12 @@ import { PrismaClient } from "@prisma/client";
 import { formatedDate } from "./app";
 import { encryptPassword } from "./auth-utils";
 
+type Food = {
+  food: string;
+  calories: number;
+  amount: string;
+};
+
 const prisma = new PrismaClient();
 
 const date = new Date();
@@ -21,6 +27,16 @@ const createUser = async ({
       passHash,
     },
   });
+};
+
+const createFoods = async (foods: Food[]) => {
+  for (let food of foods) {
+    await prisma.food.create({
+      data: {
+        ...food,
+      },
+    });
+  }
 };
 
 const seedDb = async () => {
@@ -93,15 +109,14 @@ const seedDb = async () => {
         calories: 650,
         amount: "1 Whole",
       },
+      {
+        food: "10 Piece Chicken Nuggets",
+        calories: 1000,
+        amount: "1 Whole",
+      },
     ];
 
-    for (let food of sampleFoods) {
-      await prisma.food.create({
-        data: {
-          ...food,
-        },
-      });
-    }
+    await createFoods(sampleFoods);
 
     const foods = await prisma.food.findMany();
 
